@@ -1,4 +1,19 @@
+#ライブラリをインポート
+import datetime as dt
+from pandas_datareader import data as web
+
+start = dt.date(2021,6,8)
+end = dt.date(2021,6,8)
+
+df = web.DataReader('7203.JP', 'stooq',start ,end)
+print(df.head())
+
+
+##########################
+#以下の関数は参考。後ほど削除
+##########################
 # ライブラリをインポート
+'''
 from bs4 import BeautifulSoup
 import requests
 import time
@@ -8,6 +23,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
 from selenium import webdriver
+
+
 
 #日経経済新聞のサイトから、指定した日付に決算発表を行う企業の銘柄コードを取得
 def getStockCode(kessanHappyoYmd):
@@ -148,3 +165,5 @@ def sendMail(sendAddress,password,fromAddress,toAddress,message):
     # 作成したメールを送信
     smtpobj.send_message(msg)
     smtpobj.close()
+
+'''

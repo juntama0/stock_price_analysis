@@ -1,16 +1,11 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+import dbconnect
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+# 証券コード取得SQL
+SELECT_SECURITIES_CODE_SQL = 'SELECT * FROM t_securities_code'
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    #証券コードリスト（('証券コード','企業名')のリスト）
+    securities_code_list = dbconnect.select_sql(SELECT_SECURITIES_CODE_SQL)
+    print(securities_code_list)
