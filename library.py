@@ -23,8 +23,8 @@ def get_average_stock_price(securities_code,ymd):
     high_stock_price = stock_price_data_group[1]
     # その日の安値
     low_stock_price = stock_price_data_group[2]
-    # その日の平均株価
-    average_stock_price = (high_stock_price + low_stock_price)/2
+    # その日の平均株価(小数点は丸め込み)
+    average_stock_price = round((high_stock_price + low_stock_price) / 2)
 
     return average_stock_price
 

@@ -17,15 +17,39 @@ def get_connection():
 
 
 def select_sql(select_sql):
-    conn = get_connection()
-    cur = conn.cursor()
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
 
-    # SQL実行（tbl_sampleから全データを取得）
-    cur.execute(select_sql)
-    rows = cur.fetchall()
+        # SQL実行（tbl_sampleから全データを取得）
+        cur.execute(select_sql)
+        rows = cur.fetchall()
 
-    cur.close()
-    conn.close()
+        cur.close()
+        conn.close()
+        print("SELECT SUCCESS")
+    except Exception as e:
+        print("SELECT FAILURE")
+        print(e)
     return rows
+
+
+def insert_sql(insert_sql):
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+
+        # SQL実行（テーブルにデータを挿入）
+        cur.execute(insert_sql)
+        # コミット
+        conn.commit()
+
+        cur.close()
+        conn.close()
+        print("INSERT SUCCESS")
+    except Exception as e:
+        print("INSERT FAILURE")
+        print(e)
+
 
 
