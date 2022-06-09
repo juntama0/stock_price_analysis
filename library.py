@@ -1,16 +1,36 @@
-#ライブラリをインポート
-import datetime as dt
-from pandas_datareader import data as web
+# ライブラリをインポート
 
-start = dt.date(2021,6,8)
-end = dt.date(2021,6,8)
+from pandas_datareader import data
 
-df = web.DataReader('7203.JP', 'stooq',start ,end)
-print(df.head())
+# その日の平均株価を取得
+def get_average_stock_price(securities_code,ymd):
+    # 日付はdatetime型(例：dt.data(2021,6,8))
+    start = ymd
+    end = ymd
+
+    # 証券コードを検索用に整形
+    search_securities_code = securities_code + ".JP"
+    # 株価を取得
+    df = data.DataReader(search_securities_code,"stooq",start,end)
+    # dataframe
+    dataframe = df.head()
+    # 対象の日付をstr型に変換
+    str_ymd = ymd.strftime("%Y-%m-%d")
+    # dataframeの中にある対象の日付のデータにアクセス
+    stock_price_data_group = dataframe.loc[str_ymd]
+
+    # その日の高値
+    high_stock_price = stock_price_data_group[1]
+    # その日の安値
+    low_stock_price = stock_price_data_group[2]
+    # その日の平均株価
+    average_stock_price = (high_stock_price + low_stock_price)/2
+
+    return average_stock_price
 
 
 ##########################
-#以下の関数は参考。後ほど削除
+# 以下の関数は参考。後ほど削除
 ##########################
 # ライブラリをインポート
 '''
