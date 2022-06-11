@@ -1,5 +1,6 @@
 # ライブラリをインポート
 from pandas_datareader import data
+import psycopg2
 
 # その日の平均株価を取得
 def get_average_stock_price(securities_code,ymd):
@@ -27,7 +28,7 @@ def get_average_stock_price(securities_code,ymd):
 
     return average_stock_price
 
-#LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）
+#LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正
 def getKessanYMD():
     # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
     kessanInfoList = []
