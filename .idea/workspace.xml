@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="938b0890-dd88-4ed7-9456-e046d8ba715e" name="Default Changelist" comment="DBへの挿入処理作成">
-      <change afterPath="$PROJECT_DIR$/sql/create_t_announcement_of_financial_statements.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql/create_t_securities_code.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql/insert_securities_code.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="938b0890-dd88-4ed7-9456-e046d8ba715e" name="Default Changelist" comment="テーブルやデータ作成sql追加">
+      <change afterPath="$PROJECT_DIR$/sql/create_t_announcement_of_financial_statements_stock_price.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/library.py" beforeDir="false" afterPath="$PROJECT_DIR$/library.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -49,6 +46,11 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/sql" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Console Colors" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/sql" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.main">
     <configuration name="dbconnect" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -165,7 +167,14 @@
       <option name="project" value="LOCAL" />
       <updated>1654792178093</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="テーブルやデータ作成sql追加">
+      <created>1654914428874</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1654914428874</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -186,7 +195,8 @@
     <MESSAGE value="株価検索処理追加" />
     <MESSAGE value="株価の検索処理を追加" />
     <MESSAGE value="DBへの挿入処理作成" />
-    <option name="LAST_COMMIT_MESSAGE" value="DBへの挿入処理作成" />
+    <MESSAGE value="テーブルやデータ作成sql追加" />
+    <option name="LAST_COMMIT_MESSAGE" value="テーブルやデータ作成sql追加" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
