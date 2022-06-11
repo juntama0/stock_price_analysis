@@ -28,7 +28,6 @@ def get_average_stock_price(securities_code,ymd):
 
     return average_stock_price
 
-
 ##########################
 # 以下の関数は参考。後ほど削除
 ##########################
