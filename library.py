@@ -28,7 +28,7 @@ def get_average_stock_price(securities_code,ymd):
 
     return average_stock_price
 
-#LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正
+#LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
 def getKessanYMD():
     # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
     kessanInfoList = []
