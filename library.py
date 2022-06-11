@@ -28,24 +28,6 @@ def get_average_stock_price(securities_code,ymd):
 
     return average_stock_price
 
-#LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）
-def getKessanYMD():
-    # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
-    kessanInfoList = []
-    # スクレイピングの許可は確認済み
-    url = "https://trade.line-sec.co.jp/stock/detail/"
-
-    # postgreSQLへの接続を確立
-    conn = getConnectionPosgre()
-    cur = conn.cursor()
-    cur.execute('SELECT stock_code FROM t_stock_code;')
-    stockCodeList = cur.fetchall()
-
-    #postgreSQLの接続をclose
-    if conn != None:
-        cur.close()
-        conn.close()
-
 ##########################
 # 以下の関数は参考。後ほど削除
 ##########################
