@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="938b0890-dd88-4ed7-9456-e046d8ba715e" name="Default Changelist" comment="DBへの挿入処理作成">
-      <change afterPath="$PROJECT_DIR$/sql/create_t_announcement_of_financial_statements.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql/create_t_securities_code.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql/insert_securities_code.sql" afterDir="false" />
+    <list default="true" id="938b0890-dd88-4ed7-9456-e046d8ba715e" name="Default Changelist" comment="プッシュの練習　メソッド作成途中　前田">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbconnect.py" beforeDir="false" afterPath="$PROJECT_DIR$/dbconnect.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/library.py" beforeDir="false" afterPath="$PROJECT_DIR$/library.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,6 +22,7 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitSEFilterConfiguration">
@@ -178,7 +177,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="初期コミット" />
@@ -186,7 +184,8 @@
     <MESSAGE value="株価検索処理追加" />
     <MESSAGE value="株価の検索処理を追加" />
     <MESSAGE value="DBへの挿入処理作成" />
-    <option name="LAST_COMMIT_MESSAGE" value="DBへの挿入処理作成" />
+    <MESSAGE value="プッシュの練習　メソッド作成途中　前田" />
+    <option name="LAST_COMMIT_MESSAGE" value="プッシュの練習　メソッド作成途中　前田" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

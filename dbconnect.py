@@ -15,7 +15,6 @@ def get_connection():
         user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT, dbname=DB_NAME
     ))
 
-
 def select_sql(select_sql):
     try:
         conn = get_connection()
