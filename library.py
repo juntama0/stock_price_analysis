@@ -1,5 +1,4 @@
 # ライブラリをインポート
-
 from pandas_datareader import data
 
 # その日の平均株価を取得
@@ -27,6 +26,33 @@ def get_average_stock_price(securities_code,ymd):
     average_stock_price = round((high_stock_price + low_stock_price) / 2)
 
     return average_stock_price
+
+#LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）
+def getKessanYMD():
+    # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
+    kessanInfoList = []
+    # スクレイピングの許可は確認済み
+    url = "https://trade.line-sec.co.jp/stock/detail/"
+
+    # postgreSQLへの接続を確立
+    conn = getConnectionPosgre()
+    cur = conn.cursor()
+    cur.execute('SELECT stock_code FROM t_stock_code;')
+    stockCodeList = cur.fetchall()
+
+    #postgreSQLの接続をclose
+    if conn != None:
+        cur.close()
+        conn.close()
+
+    # 証券コードリストの要素分、決算日情報の取得処理を繰り返す
+    for stockCode in stockCodeList:
+        try:
+            # 検索する
+            soup = BeautifulSoup(requests.get(url + stockCode).content, 'html.parser')
+            # サーバーに負荷を掛けないように1秒止める
+            time.sleep(1)
+            # class = "_5wW_H1" を抽出する。検討中。
 
 ##########################
 # 以下の関数は参考。後ほど削除
