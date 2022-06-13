@@ -36,13 +36,13 @@ if __name__ == "__main__":
     cur.execute(SELECT_SQL_ANNOUNCEMENT_YMD)
     announcement_ymd_list = cur.fetchall()
 
-    # 各企業の第一四半期の決算発表日を使用し、決算発表日とその翌日の株価を取得
-    lib.insert_stock_price(announcement_ymd_list)
 
     # 後で消す
     print(announcement_ymd_list)
     print(securities_code_list)
 
+    # 各企業の第一四半期の決算発表日を使用し、決算発表日とその翌日の株価を取得
+    lib.insert_stock_price(announcement_ymd_list)
 
 
     #cur.execute(SELECT_SECURITIES_CODE_SQL)

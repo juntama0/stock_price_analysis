@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="938b0890-dd88-4ed7-9456-e046d8ba715e" name="Default Changelist" comment="株価テーブル作成sql追加">
+    <list default="true" id="938b0890-dd88-4ed7-9456-e046d8ba715e" name="Default Changelist" comment="決算発表日の株価情報取得処理を追加。">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbconnect.py" beforeDir="false" afterPath="$PROJECT_DIR$/dbconnect.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/library.py" beforeDir="false" afterPath="$PROJECT_DIR$/library.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql/create_t_announcement_of_financial_statements.sql" beforeDir="false" afterPath="$PROJECT_DIR$/create_sql/create_t_announcement_of_financial_statements.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql/create_t_announcement_of_financial_statements_stock_price.sql" beforeDir="false" afterPath="$PROJECT_DIR$/create_sql/create_t_announcement_of_financial_statements_stock_price.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql/create_t_securities_code.sql" beforeDir="false" afterPath="$PROJECT_DIR$/create_sql/create_t_securities_code.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql/insert_securities_code.sql" beforeDir="false" afterPath="$PROJECT_DIR$/insert_sql/insert_securities_code.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +49,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/sql" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Console Colors" />
   </component>
-  <component name="RunManager" selected="Python.library">
+  <component name="RunManager" selected="Python.main">
     <configuration name="dbconnect" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="stock_price_analysis" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -169,7 +164,14 @@
       <option name="project" value="LOCAL" />
       <updated>1654792178093</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="決算発表日の株価情報取得処理を追加。">
+      <created>1655133558875</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1655133558875</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -191,6 +193,7 @@
     <MESSAGE value="株価の検索処理を追加" />
     <MESSAGE value="DBへの挿入処理作成" />
     <MESSAGE value="プッシュの練習　メソッド作成途中　前田" />
-    <option name="LAST_COMMIT_MESSAGE" value="プッシュの練習　メソッド作成途中　前田" />
+    <MESSAGE value="決算発表日の株価情報取得処理を追加。" />
+    <option name="LAST_COMMIT_MESSAGE" value="決算発表日の株価情報取得処理を追加。" />
   </component>
 </project>

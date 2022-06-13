@@ -6,40 +6,34 @@ import time
 from bs4 import BeautifulSoup
 
 # その日の平均株価を取得
-def get_average_stock_price(securities_code,ymd):
-    # 日付はdatetime型(例：dt.date(2021,6,8))
-    ymd = '2021-01-01'
-    print(ymd)
+def get_average_stock_price(securities_code,ymd):# ymdは日付型（例：'2022-01-01'）
     start = ymd
     end = ymd
 
-    # 証券コードを検索用に整形
-    search_securities_code = securities_code + ".JP"
-    # 株価を取得
-    df = data.DataReader(search_securities_code,"stooq",start,end)
-    # dataframe
-    dataframe = df.head()
-    # 対象の日付をstr型に変換
-    str_ymd = ymd.strftime("%Y-%m-%d")
-    # dataframeの中にある対象の日付のデータにアクセス
-    stock_price_data_group = dataframe.loc[str_ymd]
+    try:
+        # 証券コードを検索用に整形
+        search_securities_code = securities_code + ".JP"
+        # 株価を取得
+        df = data.DataReader(search_securities_code,"stooq",start,end)
+        # dataframe
+        dataframe = df.head()
+        # 対象の日付をstr型に変換
+        str_ymd = ymd.strftime("%Y-%m-%d")
+        # dataframeの中にある対象の日付のデータにアクセス
+        stock_price_data_group = dataframe.loc[str_ymd]
 
-    # その日の高値
-    high_stock_price = stock_price_data_group[1]
-    # その日の安値
-    low_stock_price = stock_price_data_group[2]
-    # その日の平均株価(小数点は丸め込み)
-    average_stock_price = round((high_stock_price + low_stock_price) / 2)
+        # その日の高値
+        high_stock_price = stock_price_data_group[1]
+        # その日の安値
+        low_stock_price = stock_price_data_group[2]
+        # その日の平均株価(小数点は丸め込み)
+        average_stock_price = round((high_stock_price + low_stock_price) / 2)
 
-    return average_stock_price
+        return average_stock_price
+    except Exception as e:
+        print(e)
+        return 0
 
-print(get_average_stock_price('7203',''))
-
-print(type(datetime.date(2021,6,8)))
-d = datetime.datetime.strptime('20220101', "%Y%m%d")
-a = datetime.date(d.year,d.month,d.day)
-print(a)
-print(type(a))
 
 # 決算発表日の株価と上昇率をDBに登録
 def insert_stock_price(announcement_ymd_list):
@@ -54,16 +48,11 @@ def insert_stock_price(announcement_ymd_list):
         # 決算発表日の翌日を日付型に変換
         announcement_next_day_ymd = announcement_ymd_tuple[4]
         announcement_next_day_ymd_datetime = datetime.datetime.strptime(announcement_next_day_ymd, "%Y%m%d")
-        announcement_next_day_ymd_date = datetime.date(announcement_next_day_ymd_datetime.year, announcement_next_day_ymd_datetime.month, announcement_next_day_ymd_datetime.day)
-        print(announcement_next_day_ymd_date)
 
         # 決算発表日の株価を取得
-        #announcement_stock_price = get_average_stock_price(securities_code,announcement_next_day_ymd_date)
-        #print(announcement_stock_price)
+        announcement_stock_price = get_average_stock_price(securities_code,announcement_ymd_datetime)
         # 決算発表日の翌日の株価を取得
-        #announcement_next_day_stock_price = get_average_stock_price(securities_code, announcement_next_day_ymd_date)
-        #print(announcement_next_day_stock_price)
-
+        announcement_next_day_stock_price = get_average_stock_price(securities_code, announcement_next_day_ymd_datetime)
 
 
 '''
