@@ -36,8 +36,13 @@ def get_average_stock_price(securities_code,ymd):# ymdは日付型（例：'2022
 
 
 # 決算発表日の株価と上昇率をDBに登録
-def insert_stock_price(announcement_ymd_list):
+def fetch_stock_price(announcement_ymd_list):
+    # 返却用のリスト（決算発表日株価、決算発表日翌日の株価、上昇率のリスト）
+    return_list = []
     for announcement_ymd_tuple in announcement_ymd_list:
+        # 一時格納用株価リスト
+        stock_price_list = []
+
         # 証券コードを取得
         securities_code = announcement_ymd_tuple[0]
 
@@ -53,7 +58,20 @@ def insert_stock_price(announcement_ymd_list):
         announcement_stock_price = get_average_stock_price(securities_code,announcement_ymd_datetime)
         # 決算発表日の翌日の株価を取得
         announcement_next_day_stock_price = get_average_stock_price(securities_code, announcement_next_day_ymd_datetime)
+        # 上昇率を算出
+        growth_rate = round((announcement_next_day_stock_price - announcement_stock_price) / announcement_stock_price * 100,1)
 
+        # 一時格納用株価リストに格納
+        stock_price_list.append(announcement_ymd_tuple[0])
+        stock_price_list.append(announcement_ymd_tuple[1])
+        stock_price_list.append(announcement_ymd_tuple[2])
+        stock_price_list.append(announcement_stock_price)
+        stock_price_list.append(announcement_next_day_stock_price)
+        stock_price_list.append(growth_rate)
+        # 返却用リストに格納
+        return_list.append(stock_price_list)
+
+    return return_list
 
 '''
 #LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
