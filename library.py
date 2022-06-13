@@ -1,10 +1,15 @@
 # ライブラリをインポート
 from pandas_datareader import data
+import datetime
 import psycopg2
+import time
+from bs4 import BeautifulSoup
 
 # その日の平均株価を取得
 def get_average_stock_price(securities_code,ymd):
-    # 日付はdatetime型(例：dt.data(2021,6,8))
+    # 日付はdatetime型(例：dt.date(2021,6,8))
+    ymd = '2021-01-01'
+    print(ymd)
     start = ymd
     end = ymd
 
@@ -28,6 +33,40 @@ def get_average_stock_price(securities_code,ymd):
 
     return average_stock_price
 
+print(get_average_stock_price('7203',''))
+
+print(type(datetime.date(2021,6,8)))
+d = datetime.datetime.strptime('20220101', "%Y%m%d")
+a = datetime.date(d.year,d.month,d.day)
+print(a)
+print(type(a))
+
+# 決算発表日の株価と上昇率をDBに登録
+def insert_stock_price(announcement_ymd_list):
+    for announcement_ymd_tuple in announcement_ymd_list:
+        # 証券コードを取得
+        securities_code = announcement_ymd_tuple[0]
+
+        # 決算発表日を日付型に変換
+        announcement_ymd = announcement_ymd_tuple[3]
+        announcement_ymd_datetime = datetime.datetime.strptime(announcement_ymd, "%Y%m%d")
+
+        # 決算発表日の翌日を日付型に変換
+        announcement_next_day_ymd = announcement_ymd_tuple[4]
+        announcement_next_day_ymd_datetime = datetime.datetime.strptime(announcement_next_day_ymd, "%Y%m%d")
+        announcement_next_day_ymd_date = datetime.date(announcement_next_day_ymd_datetime.year, announcement_next_day_ymd_datetime.month, announcement_next_day_ymd_datetime.day)
+        print(announcement_next_day_ymd_date)
+
+        # 決算発表日の株価を取得
+        #announcement_stock_price = get_average_stock_price(securities_code,announcement_next_day_ymd_date)
+        #print(announcement_stock_price)
+        # 決算発表日の翌日の株価を取得
+        #announcement_next_day_stock_price = get_average_stock_price(securities_code, announcement_next_day_ymd_date)
+        #print(announcement_next_day_stock_price)
+
+
+
+'''
 #LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
 def getKessanYMD():
     # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
@@ -54,6 +93,8 @@ def getKessanYMD():
             # サーバーに負荷を掛けないように1秒止める
             time.sleep(1)
             # class = "_5wW_H1" を抽出する。検討中。
+
+'''
 
 ##########################
 # 以下の関数は参考。後ほど削除

@@ -1,6 +1,5 @@
 import psycopg2
 
-
 # DB接続関数
 def get_connection():
     # DB接続情報
@@ -15,6 +14,7 @@ def get_connection():
         user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT, dbname=DB_NAME
     ))
 
+'''
 def select_sql(select_sql):
     try:
         conn = get_connection()
@@ -31,8 +31,10 @@ def select_sql(select_sql):
         print("SELECT FAILURE")
         print(e)
     return rows
+'''
 
 
+'''
 def insert_sql(insert_sql):
     try:
         conn = get_connection()
@@ -49,6 +51,6 @@ def insert_sql(insert_sql):
     except Exception as e:
         print("INSERT FAILURE")
         print(e)
-
+'''
 
 
