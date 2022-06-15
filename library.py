@@ -4,6 +4,9 @@ import datetime
 import psycopg2
 import time
 from bs4 import BeautifulSoup
+import numpy
+import matplotlib.pyplot as plt
+
 
 # その日の平均株価を取得
 def get_average_stock_price(securities_code,ymd):# ymdは日付型（例：'2022-01-01'）
@@ -72,6 +75,23 @@ def fetch_stock_price(announcement_ymd_list):
         return_list.append(stock_price_list)
 
     return return_list
+
+
+# 散布図を作成
+def create_growth_comparizon_scatter_plot(previous_growth_rate_list,growth_rate_list,year,quarter):# 上昇率の単位は％
+    x_list = numpy.array(previous_growth_rate_list)
+    y_list = numpy.array(growth_rate_list)
+    plt.xlim(-20.0,20.0)
+    plt.ylim(-20.0,20.0)
+    plt.title("Year:" + year + " Quarter:" + quarter,fontsize=20)
+    plt.xlabel("This growth rate",fontsize=20)
+    plt.ylabel("Previous growth rate",fontsize=20)
+    plt.grid(True)
+    plt.tick_params(labelsize=10)
+    # グラフの描画
+    plt.scatter(x_list,y_list,s=5,c="b",marker="D",alpha=0.5)
+    plt.show()
+
 
 '''
 #LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。

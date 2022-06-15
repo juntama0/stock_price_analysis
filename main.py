@@ -1,13 +1,7 @@
 import dbconnect
 import library as lib
 import datetime as dt
-
-# 証券コード取得SQL
-SELECT_SQL_SECURITIES_CODE = "SELECT pk_securities_code ,company_name FROM T_SECURITIES_CODE"
-# 決算発表日取得SQL
-SELECT_SQL_ANNOUNCEMENT_YMD = "SELECT pk_securities_code, pk_year, pk_quarterly_settlement, announcement_of_financial_statements_ymd, next_day_announcement_of_financial_statements_ymd FROM t_announcement_of_financial_statements ORDER BY pk_securities_code, pk_year, pk_quarterly_settlement"
-# 株価データ挿入SQL
-INSERT_SQL_STOCK_PRICE = "INSERT INTO t_announcement_of_financial_statements_stock_price (pk_securities_code, pk_year, pk_quarterly_settlement, stock_price, next_day_stock_price, growth_rate) VALUES ({pk_securities_code}, {pk_year}, {pk_quarterly_settlement}, {stock_price}, {next_day_stock_price}, {growth_rate});"
+import time
 
 #お試しsql
 INSERT_STOCK_PRICE_SQL = \
@@ -20,42 +14,34 @@ INSERT_STOCK_PRICE_SQL = \
     ")"
 
 if __name__ == "__main__":
+    # 開始時間
+    start_time = time.time()
+
     # DB接続開始
     conn = dbconnect.get_connection()
     cur = conn.cursor()
 
     # 証券コードリスト（('証券コード','企業名')のリスト）を取得
-    cur.execute(SELECT_SQL_SECURITIES_CODE)
-    securities_code_list = cur.fetchall()
+    securities_code_list = dbconnect.select_sql_securities_code(cur)
 
     # 企業の決算発表日情報をDBに格納
 
     # 各企業の決算発表日情報をDBから取得
-    cur.execute(SELECT_SQL_ANNOUNCEMENT_YMD)
-    announcement_ymd_list = cur.fetchall()
+    announcement_ymd_list = dbconnect.select_sql_announcement_ymd(cur)
 
-    # 各企業の第一四半期の決算発表日を使用し、決算発表日とその翌日の株価を取得
-    stock_price_list = lib.fetch_stock_price(announcement_ymd_list)
+    # 各企業の第一四半期の決算発表日を使用し、決算発表日とその翌日の株価を取得（必要があれば実行。基本は最初の一回だけで良い）
+    #stock_price_list = lib.fetch_stock_price(announcement_ymd_list)
 
-    # 株価のINSERT_SQLを作成
-    for stock_price_set in stock_price_list:
-        # INSERTのVALUESをセットする
-        complete_insert_sql_stock_price = INSERT_SQL_STOCK_PRICE.format(**{ \
-            "pk_securities_code" : stock_price_set[0] \
-            , "pk_year" : stock_price_set[1]\
-            , "pk_quarterly_settlement" : stock_price_set[2]\
-            , "stock_price" : stock_price_set[3]\
-            , "next_day_stock_price" : stock_price_set[4]\
-            , "growth_rate" : stock_price_set[5]
-            })
-        # SQL実行
-        cur.execute(complete_insert_sql_stock_price)
-        print(complete_insert_sql_stock_price)
+    # 株価情報をDBに格納（まだデータを格納していなければ実行。基本は重複エラーになるため実行しない）
+    #dbconnect.insert_stock_price(conn,cur,stock_price_list)
 
-    # コミット
-    conn.commit()
+    # 1Qの上昇率を取得
+    growth_rate_list_quarter1 = dbconnect.select_sql_growth_rate(cur,'2021','1')
+    print(growth_rate_list_quarter1)
 
-    # 株価情報をDBに格納
+    lib.create_growth_comparizon_scatter_plot(growth_rate_list_quarter1,growth_rate_list_quarter1,'2021','1')
+
+
 
     #cur.execute(SELECT_SECURITIES_CODE_SQL)
     #securities_code_list = cur.fetchall()
@@ -63,6 +49,10 @@ if __name__ == "__main__":
     # DB接続終了
     cur.close()
     conn.close()
+
+    # 終了時間
+    end_time = time.time()
+    print(end_time - start_time)
 
     '''
     # 証券コードリスト（('証券コード','企業名')のリスト）
