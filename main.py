@@ -38,14 +38,22 @@ if __name__ == "__main__":
     stock_price_list = lib.fetch_stock_price(announcement_ymd_list)
 
     # 株価のINSERT_SQLを作成
-    complete_insert_sql_stock_price = INSERT_SQL_STOCK_PRICE.format(**{ \
-        "pk_securities_code" : stock_price_list[0] \
-        , "pk_year" : stock_price_list[1]\
-        , "pk_quarterly_settlement" : stock_price_list[2]\
-        , "stock_price" : stock_price_list[3]\
-        , "next_day_stock_price" : stock_price_list[4]\
-        , "growth_rate" : stock_price_list[5]
-        })
+    for stock_price_set in stock_price_list:
+        # INSERTのVALUESをセットする
+        complete_insert_sql_stock_price = INSERT_SQL_STOCK_PRICE.format(**{ \
+            "pk_securities_code" : stock_price_set[0] \
+            , "pk_year" : stock_price_set[1]\
+            , "pk_quarterly_settlement" : stock_price_set[2]\
+            , "stock_price" : stock_price_set[3]\
+            , "next_day_stock_price" : stock_price_set[4]\
+            , "growth_rate" : stock_price_set[5]
+            })
+        # SQL実行
+        cur.execute(complete_insert_sql_stock_price)
+        print(complete_insert_sql_stock_price)
+
+    # コミット
+    conn.commit()
 
     # 株価情報をDBに格納
 
