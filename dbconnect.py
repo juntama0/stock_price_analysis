@@ -69,3 +69,12 @@ def select_sql_growth_rate(cursor,year,quarterly_settlement):
         result_list.append(growth_rate_tuple[0])
 
     return result_list
+
+# 証券コードを取得
+def select_sql_stock_code_all(cursor):
+    # 証券コード取得SQL
+    SELECT_SQL_STOCK_CODE = "SELECT stock_code FROM t_stock_code;"
+    cursor.execute(SELECT_SQL_STOCK_CODE)
+    stockCodeList = cursor.fetchall()
+
+    return stockCodeList

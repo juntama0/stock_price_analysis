@@ -6,6 +6,7 @@ import time
 from bs4 import BeautifulSoup
 import numpy
 import matplotlib.pyplot as plt
+import dbconnect
 
 
 # その日の平均株価を取得
@@ -92,7 +93,6 @@ def create_growth_comparizon_scatter_plot(previous_growth_rate_list,growth_rate_
     plt.scatter(x_list,y_list,s=5,c="b",marker="D",alpha=0.5)
     plt.show()
 
-
 '''
 #LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
 def getKessanYMD():
@@ -102,13 +102,14 @@ def getKessanYMD():
     url = "https://trade.line-sec.co.jp/stock/detail/"
 
     # postgreSQLへの接続を確立
-    conn = getConnectionPosgre()
+    conn = dbconnect.get_connection()
     cur = conn.cursor()
-    cur.execute('SELECT stock_code FROM t_stock_code;')
-    stockCodeList = cur.fetchall()
+
+    # 証券コード取得メソッドの呼び出し
+    stockCodeList = dbconnect.select_sql_stock_code_all(cur)
 
     #postgreSQLの接続をclose
-    if conn != None:
+    if conn is not None:
         cur.close()
         conn.close()
 
@@ -116,10 +117,16 @@ def getKessanYMD():
     for stockCode in stockCodeList:
         try:
             # 検索する
-            soup = BeautifulSoup(requests.get(url + stockCode).content, 'html.parser')
+            soup = BeautifulSoup(requests.get(url + stockCode).content, "html.parser")
             # サーバーに負荷を掛けないように1秒止める
             time.sleep(1)
-            # class = "_5wW_H1" を抽出する。検討中。
+            # class = _5wW_WUの存在確認
+            checkClass = soup.find(True, class_ = "_5wW_WU")
+            # class = _5wW_WU が存在する場合、class = "_5wW_H1" を抽出する。存在しない場合次の証券コードへ。
+            if checkClass is not None:
+                settlementInfo = soup.find_all(True, class_ = "_5wW_H1")
+
+
 
 '''
 
