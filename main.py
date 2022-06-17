@@ -20,20 +20,26 @@ if __name__ == "__main__":
     # DB接続開始
     conn = dbconnect.get_connection()
     cur = conn.cursor()
+    print("DB接続完了")
 
     # 証券コードリスト（('証券コード','企業名')のリスト）を取得
     securities_code_list = dbconnect.select_sql_securities_code(cur)
+    print("証券コードリスト取得完了")
 
     # 企業の決算発表日情報をDBに格納
 
-    # 各企業の決算発表日情報をDBから取得
+    # 各企業の決算発表日情報をDBから取得([(証券コード,年度,クォータ,決算発表日,翌営業日の決算発表日),(,,,,,)]のリスト)
     announcement_ymd_list = dbconnect.select_sql_announcement_ymd(cur)
+    print(announcement_ymd_list)
+    print("決算発表日情報取得完了")
 
     # 各企業の第一四半期の決算発表日を使用し、決算発表日とその翌日の株価を取得（必要があれば実行。基本は最初の一回だけで良い）
-    #stock_price_list = lib.fetch_stock_price(announcement_ymd_list)
+    stock_price_list = lib.fetch_stock_price(announcement_ymd_list)
+    print("株価リスト取得完了")
 
     # 株価情報をDBに格納（まだデータを格納していなければ実行。基本は重複エラーになるため実行しない）
-    #dbconnect.insert_stock_price(conn,cur,stock_price_list)
+    dbconnect.insert_stock_price(conn,cur,stock_price_list)
+    print("DBに株価情報を格納完了")
 
     # 1Qの上昇率を取得
     growth_rate_list_quarter1 = dbconnect.select_sql_growth_rate(cur,'2021','1')
@@ -54,21 +60,3 @@ if __name__ == "__main__":
     end_time = time.time()
     print(end_time - start_time)
 
-    '''
-    # 証券コードリスト（('証券コード','企業名')のリスト）
-    securities_code_list = dbconnect.select_sql(SELECT_SECURITIES_CODE_SQL)
-
-    # 株価の検索処理
-    price = lib.get_average_stock_price("7203", dt.date(2021, 6, 8))
-    print(price)
-
-    dbconnect.insert_sql(INSERT_STOCK_PRICE_SQL)
-    '''
-
-    '''
-    i = 0
-    for securities_code_tuple in securities_code_list:
-        if i < 10:
-            print(lib.get_average_stock_price(securities_code_tuple[0],dt.date(2021,6,8)))
-            i = i + 1
-    '''

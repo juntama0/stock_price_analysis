@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS public.t_announcement_of_financial_statements_stock_p
     stock_price numeric NOT NULL,
     next_day_stock_price numeric NOT NULL,
     growth_rate numeric NOT NULL,
+    average_stock_price_25,
     CONSTRAINT t_announcement_of_financial_statements_stock_price_pkey PRIMARY KEY (pk_securities_code, pk_year, pk_quarterly_settlement)
 )

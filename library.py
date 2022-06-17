@@ -1,6 +1,7 @@
 # ライブラリをインポート
 from pandas_datareader import data
 import datetime
+from datetime import timedelta
 import psycopg2
 import time
 from bs4 import BeautifulSoup
@@ -8,8 +9,9 @@ import numpy
 import matplotlib.pyplot as plt
 
 
-# その日の平均株価を取得
-def get_average_stock_price(securities_code,ymd):# ymdは日付型（例：'2022-01-01'）
+# その日の株価を取得
+def get_stock_price(securities_code,ymd):# ymdは日付型（例：'2022-01-01'）
+    start_time = time.time()
     start = ymd
     end = ymd
 
@@ -18,12 +20,49 @@ def get_average_stock_price(securities_code,ymd):# ymdは日付型（例：'2022
         search_securities_code = securities_code + ".JP"
         # 株価を取得
         df = data.DataReader(search_securities_code,"stooq",start,end)
-        # dataframe
+        # dataframeの
         dataframe = df.head()
         # 対象の日付をstr型に変換
         str_ymd = ymd.strftime("%Y-%m-%d")
         # dataframeの中にある対象の日付のデータにアクセス
         stock_price_data_group = dataframe.loc[str_ymd]
+
+        # その日の高値
+        high_stock_price = stock_price_data_group[1]
+        # その日の安値
+        low_stock_price = stock_price_data_group[2]
+        # その日の平均株価(小数点は丸め込み)
+        average_stock_price = round((high_stock_price + low_stock_price) / 2)
+
+        end_time = time.time()
+        print("証券コード：" + securities_code + ",日付：" + str(ymd) + "の株価取得タイム：" + str(end_time - start_time))
+
+        return average_stock_price
+    except Exception as e:
+        print(e)
+        return 0
+
+
+# 25日間の平均株価を取得
+def get_25_average_stock_price(securities_code,ymd):# ymdは日付型（例：'2022-01-01'）
+    start = ymd - timedelta(25)
+    end = ymd
+
+    try:
+        # 証券コードを検索用に整形
+        search_securities_code = securities_code + ".JP"
+        # 株価を取得
+        df = data.DataReader(search_securities_code,"stooq",start,end)
+        # dataframe
+        dataframe = df.head(25)
+        print(type(dataframe))
+
+        # 対象の日付をstr型に変換
+        str_ymd = ymd.strftime("%Y-%m-%d")
+        # dataframeの中にある対象の日付のデータにアクセス
+        stock_price_data_group = dataframe.loc[str_ymd]
+        print(df['Open'][0])
+
 
         # その日の高値
         high_stock_price = stock_price_data_group[1]
@@ -38,7 +77,7 @@ def get_average_stock_price(securities_code,ymd):# ymdは日付型（例：'2022
         return 0
 
 
-# 決算発表日の株価と上昇率をDBに登録
+# 決算発表日の株価と上昇率を取得
 def fetch_stock_price(announcement_ymd_list):
     # 返却用のリスト（決算発表日株価、決算発表日翌日の株価、上昇率のリスト）
     return_list = []
@@ -58,11 +97,14 @@ def fetch_stock_price(announcement_ymd_list):
         announcement_next_day_ymd_datetime = datetime.datetime.strptime(announcement_next_day_ymd, "%Y%m%d")
 
         # 決算発表日の株価を取得
-        announcement_stock_price = get_average_stock_price(securities_code,announcement_ymd_datetime)
+        announcement_stock_price = get_stock_price(securities_code,announcement_ymd_datetime)
         # 決算発表日の翌日の株価を取得
-        announcement_next_day_stock_price = get_average_stock_price(securities_code, announcement_next_day_ymd_datetime)
+        announcement_next_day_stock_price = get_stock_price(securities_code, announcement_next_day_ymd_datetime)
         # 上昇率を算出
         growth_rate = round((announcement_next_day_stock_price - announcement_stock_price) / announcement_stock_price * 100,1)
+
+        # 決算発表日から25日前の日付を取得
+        #get_average_stock_price
 
         # 一時格納用株価リストに格納
         stock_price_list.append(announcement_ymd_tuple[0])
@@ -76,6 +118,10 @@ def fetch_stock_price(announcement_ymd_list):
 
     return return_list
 
+#date = datetime.datetime.strptime('20220616', "%Y%m%d")
+#fetch_stock_price([('1301', '2021', '1', '20210112', '20210113')])
+
+#get_25_average_stock_price('7201',date)
 
 # 散布図を作成
 def create_growth_comparizon_scatter_plot(previous_growth_rate_list,growth_rate_list,year,quarter):# 上昇率の単位は％
