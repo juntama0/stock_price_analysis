@@ -1,5 +1,5 @@
 # ライブラリをインポート
-import By as By
+import ff as ff
 import requests
 from pandas_datareader import data
 import datetime
@@ -9,7 +9,9 @@ import time
 from bs4 import BeautifulSoup
 import numpy
 import matplotlib.pyplot as plt
+from selenium.webdriver.common.by import By
 import dbconnect
+from selenium import webdriver
 
 
 # その日の株価を取得
@@ -145,9 +147,74 @@ def get_settlement_ymd(securities_code_list):
     # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
     settlement_info_list = []
 
-    # スクレイピングの許可は確認済み
-    url = "https://trade.line-sec.co.jp/stock/detail/"
+    # ドライバの設定
+    firefox_service = ff.Service(executable_path="/Users/maeda_yosuke/Program/geckodriver")
+    driver = webdriver.Firefox(service=firefox_service)
 
+    '''
+    for stockCode in securities_code_list:
+
+        # タプルの要素を文字列に変換する
+        stock_code_str = "".join(stockCode)
+
+        try:
+            #URLを設定
+            url = "https://trade.line-sec.co.jp/stock/detail/" + stock_code_str
+            driver.get(url)
+            time.sleep(1)
+
+            #決算予想のリンクリスト
+            kessanForecastlinkList = driver.find_elements(By.XPATH,"//article/a")
+            #決算予想未取得フラグ
+            kessanUnacquiredFlg = True
+            #業績修正予想未取得フラグ
+            gyosekiUnacquiredFlg = True
+
+            for link in kessanForecastlinkList:
+                # クリックしたい要素までスクロール
+                driver.execute_script("arguments[0].scrollIntoView(true);", link)
+                
+                # 報告の種類名を取得（決算XQor業績修正）
+                reportName= link.find_element(By.CLASS_NAME,"_5wW_x3").text
+
+                if (reportName in kessanNameList and kessanUnacquiredFlg) or (reportName == "業績修正" and gyosekiUnacquiredFlg):
+                    #決算予想のリンクをクリック
+                    link.click()
+                    time.sleep(1)
+
+                    # 決算予想結果
+                    forecastResultPath = driver.find_element(By.CLASS_NAME, "_3rF_Ga")
+                    fororecastResult = forecastResultPath.find_element(By.TAG_NAME,"p").text
+
+                    # 企業名
+                    kigyoNameLink = driver.find_element(By.CLASS_NAME, "_3rF_nN")
+                    kigyoName = kigyoNameLink.find_element(By.TAG_NAME,"h1").text
+
+                    #報告種類が決算
+                    if reportName in kessanNameList:
+                        result = [stockCode,kigyoName,"決算",fororecastResult]
+                        kessanUnacquiredFlg = False
+
+                    #報告種類が業績修正
+                    elif reportName == "業績修正":
+                        result = [stockCode,kigyoName, "業績修正", fororecastResult]
+                        gyosekiUnacquiredFlg = False
+
+                    # 返却用のリストに結果を格納
+                    settlement_info_list.append(result)
+
+                    #前のページに戻る
+                    driver.back()
+                    time.sleep((1))
+                
+        except Exception as e:
+            print(e)
+    #ブラウザを閉じる
+    driver.close()
+
+    return settlement_info_list
+    '''
+    '''
     # 証券コードリストの要素分、決算日情報の取得処理を繰り返す
     for stockCode in securities_code_list:
         print("".join(stockCode))
@@ -159,10 +226,8 @@ def get_settlement_ymd(securities_code_list):
             # サーバーに負荷を掛けないように1秒止める
             time.sleep(1)
             print(soup)
-            # class = _5wW_WUの存在確認
-            check_class = soup.find_element(By.CLASS_NAME, "_5wW_WU").text
-            print(check_class)
-            '''
+            print(url + stock_code_str)
+
             # class = _5wW_WU が存在する場合、class = _5wW_H1 を抽出する。存在しない場合次の証券コードへスキップ。
             if check_class is not None:
                 settlement_info = soup.findAll(True, class_ = "_5wW_H1")
@@ -190,10 +255,10 @@ def get_settlement_ymd(securities_code_list):
                         settlement_date_edit = settlement_date[0:9]
                         # 決算発表日付を取得
                         settlement_published_date = settlement_info_individual.find(True, class_ = "_5wW_Jg")
-        '''
+        
         except Exception as e:
             print(e)
-
+'''
 
 ##########################
 # 以下の関数は参考。後ほど削除
