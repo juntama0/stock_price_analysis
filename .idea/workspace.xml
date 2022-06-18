@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="938b0890-dd88-4ed7-9456-e046d8ba715e" name="Default Changelist" comment="乖離率をDBに挿入する処理を追加">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbconnect.py" beforeDir="false" afterPath="$PROJECT_DIR$/dbconnect.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    <list default="true" id="938b0890-dd88-4ed7-9456-e046d8ba715e" name="Default Changelist" comment="証券コードの取得SQLを修正">
+      <change beforePath="$PROJECT_DIR$/create_sql/create_t_announcement_of_financial_statements_stock_price.sql" beforeDir="false" afterPath="$PROJECT_DIR$/create_sql/create_t_announcement_of_financial_statements_stock_price.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,7 +211,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655521517734</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="証券コードの取得SQLを修正">
+      <created>1655522993662</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1655522993662</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -240,6 +245,7 @@
     <MESSAGE value="散布図の描画処理追加" />
     <MESSAGE value="全体的に修正" />
     <MESSAGE value="乖離率をDBに挿入する処理を追加" />
-    <option name="LAST_COMMIT_MESSAGE" value="乖離率をDBに挿入する処理を追加" />
+    <MESSAGE value="証券コードの取得SQLを修正" />
+    <option name="LAST_COMMIT_MESSAGE" value="証券コードの取得SQLを修正" />
   </component>
 </project>
