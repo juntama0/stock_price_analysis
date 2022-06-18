@@ -17,7 +17,7 @@ def get_connection():
 # 証券コードを取得処理
 def select_sql_securities_code(cursor):
     # 証券コード取得SQL
-    SELECT_SQL_SECURITIES_CODE = "SELECT pk_securities_code ,company_name FROM T_SECURITIES_CODE"
+    SELECT_SQL_SECURITIES_CODE = "SELECT pk_securities_code FROM T_SECURITIES_CODE"
     cursor.execute(SELECT_SQL_SECURITIES_CODE)
     result_list = cursor.fetchall()
 

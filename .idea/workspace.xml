@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="938b0890-dd88-4ed7-9456-e046d8ba715e" name="Default Changelist" comment="全体的に修正">
+    <list default="true" id="938b0890-dd88-4ed7-9456-e046d8ba715e" name="Default Changelist" comment="乖離率をDBに挿入する処理を追加">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dbconnect.py" beforeDir="false" afterPath="$PROJECT_DIR$/dbconnect.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/library.py" beforeDir="false" afterPath="$PROJECT_DIR$/library.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -207,7 +206,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655479142668</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="乖離率をDBに挿入する処理を追加">
+      <created>1655521517734</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1655521517734</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -233,17 +239,7 @@
     <MESSAGE value="株価のinsert処理を追加" />
     <MESSAGE value="散布図の描画処理追加" />
     <MESSAGE value="全体的に修正" />
-    <option name="LAST_COMMIT_MESSAGE" value="全体的に修正" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>26</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="乖離率をDBに挿入する処理を追加" />
+    <option name="LAST_COMMIT_MESSAGE" value="乖離率をDBに挿入する処理を追加" />
   </component>
 </project>
