@@ -34,16 +34,15 @@ if __name__ == "__main__":
     print("決算発表日情報取得完了")
 
     # 各企業の第一四半期の決算発表日を使用し、決算発表日とその翌日の株価を取得（必要があれば実行。基本は最初の一回だけで良い）
-    stock_price_list = lib.fetch_stock_price(announcement_ymd_list)
+    #stock_price_list = lib.fetch_stock_price(announcement_ymd_list)
     print("株価リスト取得完了")
 
     # 株価情報をDBに格納（まだデータを格納していなければ実行。基本は重複エラーになるため実行しない）
-    dbconnect.insert_stock_price(conn,cur,stock_price_list)
+    #dbconnect.insert_stock_price(conn,cur,stock_price_list)
     print("DBに株価情報を格納完了")
 
     # 1Qの上昇率を取得
     growth_rate_list_quarter1 = dbconnect.select_sql_growth_rate(cur,'2021','1')
-    print(growth_rate_list_quarter1)
 
     lib.create_growth_comparizon_scatter_plot(growth_rate_list_quarter1,growth_rate_list_quarter1,'2021','1')
 
@@ -58,5 +57,5 @@ if __name__ == "__main__":
 
     # 終了時間
     end_time = time.time()
-    print(end_time - start_time)
+    print("実行時間：" + str(round(end_time - start_time)) + "秒")
 
