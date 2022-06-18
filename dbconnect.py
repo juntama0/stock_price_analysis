@@ -17,7 +17,7 @@ def get_connection():
 # 証券コードを取得処理
 def select_sql_securities_code(cursor):
     # 証券コード取得SQL
-    SELECT_SQL_SECURITIES_CODE = "SELECT pk_securities_code ,company_name FROM T_SECURITIES_CODE"
+    SELECT_SQL_SECURITIES_CODE = "SELECT pk_securities_code FROM T_SECURITIES_CODE"
     cursor.execute(SELECT_SQL_SECURITIES_CODE)
     result_list = cursor.fetchall()
 
@@ -36,7 +36,7 @@ def select_sql_announcement_ymd(cursor):
 # 株価情報をINSERT
 def insert_stock_price(connection,cursor,stock_price_list):
     # 株価データ挿入SQL
-    INSERT_SQL_STOCK_PRICE = "INSERT INTO t_announcement_of_financial_statements_stock_price (pk_securities_code, pk_year, pk_quarterly_settlement, stock_price, next_day_stock_price, growth_rate, average_stock_price_25) VALUES ({pk_securities_code}, {pk_year}, {pk_quarterly_settlement}, {stock_price}, {next_day_stock_price}, {growth_rate}, {average_stock_price_25});"
+    INSERT_SQL_STOCK_PRICE = "INSERT INTO t_announcement_of_financial_statements_stock_price (pk_securities_code, pk_year, pk_quarterly_settlement, stock_price, next_day_stock_price, growth_rate, deviation_rate_average_stock_price_25) VALUES ({pk_securities_code}, {pk_year}, {pk_quarterly_settlement}, {stock_price}, {next_day_stock_price}, {growth_rate}, {deviation_rate_average_stock_price_25});"
 
     for stock_price_set in stock_price_list:
         # INSERTのVALUESをセットする
@@ -47,7 +47,7 @@ def insert_stock_price(connection,cursor,stock_price_list):
             , "stock_price" : stock_price_set[3]\
             , "next_day_stock_price" : stock_price_set[4]\
             , "growth_rate" : stock_price_set[5]\
-            , "average_stock_price_25" : 1\
+            , "deviation_rate_average_stock_price_25" : stock_price_set[6]\
             })
         # SQL実行
         cursor.execute(complete_insert_sql_stock_price)
