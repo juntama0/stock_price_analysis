@@ -30,9 +30,8 @@ if __name__ == "__main__":
     # 決算発表日情報のリストを取得（[(証券コード,年度,クォータ,決算発表日,翌営業日の決算発表日),(,,,,,)]のリスト）
 
     # 決算発表日情報を取得([(証券コード,年度,クォータ,決算発表日,翌営業日の決算発表日),(,,,,,)]のリスト)
-    #settlement_info_list = lib.get_settlement_ymd(securities_code_list)
+    settlement_info_list = lib.get_settlement_ymd(securities_code_list)
 
-    lib.get_test_settlement_ymd("1301")
     # 企業の決算発表日情報をDBに格納
 
     # 各企業の決算発表日情報をDBから取得([(証券コード,年度,クォータ,決算発表日,翌営業日の決算発表日),(,,,,,)]のリスト)
@@ -49,7 +48,7 @@ if __name__ == "__main__":
     print("DBに株価情報を格納完了")
 
     # 1Qの上昇率を取得
-    growth_rate_list_quarter1 = dbconnect.select_sql_growth_rate(cur,'2021','1')
+    growth_rate_list_quarter1 = dbconnect.select_sql_growth_rate(cur, '2021', '1')
 
     lib.create_growth_comparizon_scatter_plot(growth_rate_list_quarter1,growth_rate_list_quarter1,'2021','1')
 
