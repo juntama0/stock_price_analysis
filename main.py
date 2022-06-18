@@ -26,6 +26,10 @@ if __name__ == "__main__":
     securities_code_list = dbconnect.select_sql_securities_code(cur)
     print("証券コードリスト取得完了")
 
+    # 決算発表日情報を取得([(証券コード,年度,クォータ,決算発表日,翌営業日の決算発表日),(,,,,,)]のリスト)
+    #settlement_info_list = lib.get_settlement_ymd(securities_code_list)
+
+    lib.get_test_settlement_ymd("1301")
     # 企業の決算発表日情報をDBに格納
 
     # 各企業の決算発表日情報をDBから取得([(証券コード,年度,クォータ,決算発表日,翌営業日の決算発表日),(,,,,,)]のリスト)

@@ -1,4 +1,5 @@
 # ライブラリをインポート
+import requests
 from pandas_datareader import data
 import datetime
 from datetime import timedelta
@@ -77,7 +78,6 @@ def get_25_average_stock_price(securities_code,ymd):# ymdは日付型（例：'2
         print(e)
         return 0
 
-
 # 決算発表日の株価と上昇率を取得
 def fetch_stock_price(announcement_ymd_list):
     # 返却用のリスト（決算発表日株価、決算発表日翌日の株価、上昇率のリスト）
@@ -139,42 +139,66 @@ def create_growth_comparizon_scatter_plot(previous_growth_rate_list,growth_rate_
     plt.scatter(x_list,y_list,s=5,c="b",marker="D",alpha=0.5)
     plt.show()
 
-'''
-#LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
-def getKessanYMD():
+# テスト用メソッド
+def get_test_settlement_ymd(securities_code_list):
     # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
-    kessanInfoList = []
     # スクレイピングの許可は確認済み
     url = "https://trade.line-sec.co.jp/stock/detail/"
 
-    # postgreSQLへの接続を確立
-    conn = dbconnect.get_connection()
-    cur = conn.cursor()
+    # 証券コードリストの要素分、決算日情報の取得処理を繰り返す
+    # 検索する
+    soup_test = BeautifulSoup(requests.get(url + securities_code_list).content, "html.parser")
+    # サーバーに負荷を掛けないように1秒止める
+    time.sleep(1)
+    print(soup_test)
 
-    # 証券コード取得メソッドの呼び出し
-    stockCodeList = dbconnect.select_sql_stock_code_all(cur)
+#LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
+def get_settlement_ymd(securities_code_list):
+    # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
 
-    #postgreSQLの接続をclose
-    if conn is not None:
-        cur.close()
-        conn.close()
+    # settlement_info_list = []
+
+    # スクレイピングの許可は確認済み
+    url = "https://trade.line-sec.co.jp/stock/detail/"
 
     # 証券コードリストの要素分、決算日情報の取得処理を繰り返す
-    for stockCode in stockCodeList:
+    for stockCode in securities_code_list:
         try:
             # 検索する
             soup = BeautifulSoup(requests.get(url + stockCode).content, "html.parser")
             # サーバーに負荷を掛けないように1秒止める
             time.sleep(1)
             # class = _5wW_WUの存在確認
-            checkClass = soup.find(True, class_ = "_5wW_WU")
-            # class = _5wW_WU が存在する場合、class = "_5wW_H1" を抽出する。存在しない場合次の証券コードへ。
-            if checkClass is not None:
-                settlementInfo = soup.find_all(True, class_ = "_5wW_H1")
+            check_class = soup.find(True, class_ = "_5wW_WU")
+            # class = _5wW_WU が存在する場合、class = _5wW_H1 を抽出する。存在しない場合次の証券コードへスキップ。
+            if check_class is not None:
+                settlement_info = soup.findAll(True, class_ = "_5wW_H1")
+
+                #class = _5wW_H1 の数だけ情報抽出処理を繰り返す
+                for settlement_info_individual in settlement_info:
+                    # 決算情報カテゴリの取得（決算または業績修正）
+                    settlement_category_check = settlement_info_individual.find(True, class_ = "_5wW_ZM _5wW_pE")
+
+                    # 決算発表時間を取得
+                    settlement_published_date_time = settlement_info_individual.find(True, class_="_5wW_Jg")
+                    settlement_published_time = settlement_published_date_time[11:]
+
+                    # 決算情報カテゴリが業績修正の場合、次の要素へスキップ。
+                    if settlement_category_check is not None:
 
 
-
-'''
+                        # 決算Qを取得（1Q,2Q,3Q,通期）
+                        settlement_quarter = settlement_info_individual.find(True, class_ = "_5wW_Va")
+                        # 決算カテゴリが通期の場合、文字列"4Q"に置換
+                        if settlement_quarter == "通期":
+                            settlement_quarter.replace("4Q")
+                        # 決算年度を取得
+                        settlement_date = settlement_info_individual.find(True, class_ = "_5wW_Jg")
+                        settlement_date_edit = settlement_date[0:9]
+                        # 決算発表日付を取得
+                        settlement_published_date = settlement_info_individual.find(True, class_ = "_5wW_Jg")
+        except Exception as e:
+            print(e)
 
 ##########################
 # 以下の関数は参考。後ほど削除
@@ -190,8 +214,6 @@ import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
 from selenium import webdriver
-
-
 
 #日経経済新聞のサイトから、指定した日付に決算発表を行う企業の銘柄コードを取得
 def getStockCode(kessanHappyoYmd):
@@ -332,5 +354,4 @@ def sendMail(sendAddress,password,fromAddress,toAddress,message):
     # 作成したメールを送信
     smtpobj.send_message(msg)
     smtpobj.close()
-
 '''

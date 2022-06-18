@@ -74,7 +74,7 @@ def select_sql_growth_rate(cursor,year,quarterly_settlement):
 # 証券コードを取得
 def select_sql_stock_code_all(cursor):
     # 証券コード取得SQL
-    SELECT_SQL_STOCK_CODE = "SELECT stock_code FROM t_stock_code;"
+    SELECT_SQL_STOCK_CODE = "SELECT stock_code FROM t_announcement_of_financial_statements_stock_price;"
     cursor.execute(SELECT_SQL_STOCK_CODE)
     stockCodeList = cursor.fetchall()
 
