@@ -1,4 +1,5 @@
 # ライブラリをインポート
+import By as By
 import requests
 from pandas_datareader import data
 import datetime
@@ -142,21 +143,26 @@ def create_growth_comparizon_scatter_plot(previous_growth_rate_list,growth_rate_
 #LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
 def get_settlement_ymd(securities_code_list):
     # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
-
-    # settlement_info_list = []
+    settlement_info_list = []
 
     # スクレイピングの許可は確認済み
     url = "https://trade.line-sec.co.jp/stock/detail/"
 
     # 証券コードリストの要素分、決算日情報の取得処理を繰り返す
     for stockCode in securities_code_list:
+        print("".join(stockCode))
+        # タプルの要素を文字列に変換する
+        stock_code_str = "".join(stockCode)
         try:
             # 検索する
-            soup = BeautifulSoup(requests.get(url + stockCode).content, "html.parser")
+            soup = BeautifulSoup(requests.get(url + stock_code_str).content, "html.parser")
             # サーバーに負荷を掛けないように1秒止める
             time.sleep(1)
+            print(soup)
             # class = _5wW_WUの存在確認
-            check_class = soup.find(True, class_ = "_5wW_WU")
+            check_class = soup.find_element(By.CLASS_NAME, "_5wW_WU").text
+            print(check_class)
+            '''
             # class = _5wW_WU が存在する場合、class = _5wW_H1 を抽出する。存在しない場合次の証券コードへスキップ。
             if check_class is not None:
                 settlement_info = soup.findAll(True, class_ = "_5wW_H1")
@@ -184,8 +190,10 @@ def get_settlement_ymd(securities_code_list):
                         settlement_date_edit = settlement_date[0:9]
                         # 決算発表日付を取得
                         settlement_published_date = settlement_info_individual.find(True, class_ = "_5wW_Jg")
+        '''
         except Exception as e:
             print(e)
+
 
 ##########################
 # 以下の関数は参考。後ほど削除
