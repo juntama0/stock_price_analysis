@@ -1,6 +1,7 @@
 # ライブラリをインポート
-import ff as ff
+# import ff as ff
 import requests
+import selenium
 from pandas_datareader import data
 import datetime
 from datetime import timedelta
@@ -147,11 +148,6 @@ def get_settlement_ymd(securities_code_list):
     # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
     settlement_info_list = []
 
-    # ドライバの設定
-    firefox_service = ff.Service(executable_path="/Users/maeda_yosuke/Program/geckodriver")
-    driver = webdriver.Firefox(service=firefox_service)
-
-    '''
     for stockCode in securities_code_list:
 
         # タプルの要素を文字列に変換する
@@ -160,9 +156,12 @@ def get_settlement_ymd(securities_code_list):
         try:
             #URLを設定
             url = "https://trade.line-sec.co.jp/stock/detail/" + stock_code_str
+            
+            # ドライバの設定（geckodriver は /usr/local/bin/に配置している）
+            driver = webdriver.Firefox()
             driver.get(url)
             time.sleep(1)
-
+            '''
             #決算予想のリンクリスト
             kessanForecastlinkList = driver.find_elements(By.XPATH,"//article/a")
             #決算予想未取得フラグ
@@ -206,14 +205,14 @@ def get_settlement_ymd(securities_code_list):
                     #前のページに戻る
                     driver.back()
                     time.sleep((1))
-                
+            #ブラウザを閉じる
+            driver.close()
+             '''
         except Exception as e:
             print(e)
-    #ブラウザを閉じる
-    driver.close()
 
     return settlement_info_list
-    '''
+
     '''
     # 証券コードリストの要素分、決算日情報の取得処理を繰り返す
     for stockCode in securities_code_list:
@@ -340,7 +339,7 @@ def getStockPriceForecastFromLineShoken(stockCodeList):
             driver.get(url)
             time.sleep(1)
 
-            #決算予想のリンクリスト
+            #決算ビジュアルレポートのリスト
             kessanForecastlinkList = driver.find_elements(By.XPATH,"//article/a")
             #決算予想未取得フラグ
             kessanUnacquiredFlg = True
