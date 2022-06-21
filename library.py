@@ -151,31 +151,68 @@ def get_settlement_ymd(securities_code_list):
     for stockCode in securities_code_list:
 
         # タプルの要素を文字列に変換する
-        stock_code_str = "".join(stockCode)
+        # stock_code_str = "".join(stockCode)
 
         try:
             #URLを設定
-            url = "https://trade.line-sec.co.jp/stock/detail/" + stock_code_str
-            
+            #url = "https://trade.line-sec.co.jp/stock/detail/" + stock_code_str
+
+            # テスト用の行。完成後削除
+            url = "https://trade.line-sec.co.jp/stock/detail/" + "1301"
+
             # ドライバの設定（geckodriver は /usr/local/bin/に配置している）
             driver = webdriver.Firefox()
             driver.get(url)
             time.sleep(1)
-            '''
+
             #決算予想のリンクリスト
-            kessanForecastlinkList = driver.find_elements(By.XPATH,"//article/a")
+            kessanForecastlinkList = driver.find_elements(By.XPATH, "//article/a")
             #決算予想未取得フラグ
             kessanUnacquiredFlg = True
             #業績修正予想未取得フラグ
             gyosekiUnacquiredFlg = True
 
             for link in kessanForecastlinkList:
-                # クリックしたい要素までスクロール
-                driver.execute_script("arguments[0].scrollIntoView(true);", link)
-                
-                # 報告の種類名を取得（決算XQor業績修正）
-                reportName= link.find_element(By.CLASS_NAME,"_5wW_x3").text
+                # 報告の種類名を取得（決算or業績修正）
+                settlement_category = link.find_element(By.CLASS_NAME, "_5wW_ZM").text
+                # 決算クオーターを取得（通期or1Qor2Qor3QorNone）
+                print(settlement_category)
+                if not settlement_category == "業績修正":
+                    settlement_quarter = link.find_element(By.CLASS_NAME, "_5wW_Va").text
+                    print(settlement_quarter)
+                else:
+                    settlement_quarter = None
+                    print(settlement_quarter)
+                # 決算年度を取得
+                settlement_year = link.find_element(By.CLASS_NAME, "_5wW_Jg").text
+                # 決算発表日と時間を取得
+                settlement_published_date_time = link.find_element(By.CLASS_NAME, "_5wW_uB").text
+                time.sleep(1)
 
+                # テスト用printメソッド。完成後削除
+                print(settlement_category)
+                print(settlement_quarter)
+                print(settlement_year)
+                print(settlement_published_date_time)
+
+                # データ整形。決算クオーターが"通期"の場合、"4Q"に置換する。
+                if settlement_quarter == "通期":
+                    settlement_quarter = "4Q"
+
+                # データ整形。決算年度のみを切り出す。
+                settlement_year = settlement_year[0:8]
+
+                # データ整形。決算公表日と決算公表時間を分割する。
+                settlement_published_date = settlement_published_date_time[0:11]
+                settlement_published_time = settlement_published_date_time[11:]
+
+                if (settlement_published_time == "15:00") and (settlement_category is not "業績修正"):
+                    print("if文の中")
+                else:
+                    print("if文の外")
+                    continue
+
+            '''
                 if (reportName in kessanNameList and kessanUnacquiredFlg) or (reportName == "業績修正" and gyosekiUnacquiredFlg):
                     #決算予想のリンクをクリック
                     link.click()
@@ -205,9 +242,10 @@ def get_settlement_ymd(securities_code_list):
                     #前のページに戻る
                     driver.back()
                     time.sleep((1))
+            
             #ブラウザを閉じる
             driver.close()
-             '''
+            '''
         except Exception as e:
             print(e)
 
