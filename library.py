@@ -1,5 +1,4 @@
 # ライブラリをインポート
-# import ff as ff
 import requests
 import selenium
 from pandas_datareader import data
@@ -145,7 +144,7 @@ def create_growth_comparizon_scatter_plot(previous_growth_rate_list,growth_rate_
 
 #LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
 def get_settlement_ymd(securities_code_list):
-    # 決算日情報（Q、決算年月日、決算発表時間）を保持する配列
+    # 決算日情報（証券コード、年度、クォータ、決算公表日、決算公表日の翌営業日）を保持する配列
     settlement_info_list = []
 
     for stockCode in securities_code_list:
@@ -165,8 +164,20 @@ def get_settlement_ymd(securities_code_list):
             driver.get(url)
             time.sleep(1)
 
-            #決算予想のリンクリスト
+            # もっとみるボタンの存在確認
+            settlement_button = driver.find_elements(By.XPATH, "//article/div/div/button")
+            print(settlement_button)
+            # もっとみるボタンが存在する場合、ボタンをクリックする
+            if not len(settlement_button) == 0:
+                for button_to_click in settlement_button:
+                    # クリックしたいボタンまで画面をスクロール
+                    driver.execute_script("arguments[0].scrollIntoView(true);", button_to_click)
+                    button_to_click.click()
+                    time.sleep(1)
+
+            # 決算予想のリンクリスト
             kessanForecastlinkList = driver.find_elements(By.XPATH, "//article/a")
+
             #決算予想未取得フラグ
             kessanUnacquiredFlg = True
             #業績修正予想未取得フラグ
@@ -200,17 +211,34 @@ def get_settlement_ymd(securities_code_list):
                     settlement_quarter = "4Q"
 
                 # データ整形。決算年度のみを切り出す。
-                settlement_year = settlement_year[0:8]
+                settlement_year = settlement_year[0:4]
 
                 # データ整形。決算公表日と決算公表時間を分割する。
                 settlement_published_date = settlement_published_date_time[0:11]
                 settlement_published_time = settlement_published_date_time[11:]
 
-                if (settlement_published_time == "15:00") and (settlement_category is not "業績修正"):
-                    print("if文の中")
-                else:
-                    print("if文の外")
+                # データ整形。決算公表日に含まれている"/"を取り除く。
+                settlement_published_date = settlement_published_date.replace("/", "")
+                # 決算公表日の翌営業日を求めるために、文字列を日付型にする。
+                settlement_published_date_tmp = datetime.datetime.strptime(settlement_published_date, '%Y%m%d')
+                print(settlement_published_date)
+                print(settlement_published_date_tmp)
+
+                settlement_published_time = settlement_published_date_time[11:]
+
+                # 決算カテゴリが"決算"かつ決算公表時間が"15:00"の場合、返却用リストにデータを格納する。
+                if (settlement_category == "決算") and (settlement_published_time == "15:00"):
+                    '''
+                    settlement_info_result = [stock_code_str, settlement_year, settlement_quarter,settlement_published_date, ]
+                    settlement_info_list.append(settlement_info_result)
+                    '''
+                # 決算カテゴリが"業績修正"かつ決算公表時間が"15:00"の場合、次の要素へ処理を移る。
+                elif (settlement_category == "業績修正") and (settlement_published_time == "15:00"):
                     continue
+                # 決算公表時間が15:00でない場合、次の要素へ処理を移る。
+                elif settlement_published_time is not "15:00":
+                    continue
+
 
             '''
                 if (reportName in kessanNameList and kessanUnacquiredFlg) or (reportName == "業績修正" and gyosekiUnacquiredFlg):
