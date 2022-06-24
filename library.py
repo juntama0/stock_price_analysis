@@ -1,4 +1,5 @@
 # ライブラリをインポート
+import jpholiday as jpholiday
 import requests
 import selenium
 from pandas_datareader import data
@@ -142,7 +143,7 @@ def create_growth_comparizon_scatter_plot(previous_growth_rate_list,growth_rate_
     plt.scatter(x_list,y_list,s=5,c="b",marker="D",alpha=0.5)
     plt.show()
 
-#LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
+# LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
 def get_settlement_ymd(securities_code_list):
     # 決算日情報（証券コード、年度、クォータ、決算公表日、決算公表日の翌営業日）を保持する配列
     settlement_info_list = []
@@ -150,24 +151,19 @@ def get_settlement_ymd(securities_code_list):
     for stockCode in securities_code_list:
 
         # タプルの要素を文字列に変換する
-        # stock_code_str = "".join(stockCode)
+        stock_code_str = "".join(stockCode)
 
         try:
-            #URLを設定
-            #url = "https://trade.line-sec.co.jp/stock/detail/" + stock_code_str
-
-            # テスト用の行。完成後削除
-            url = "https://trade.line-sec.co.jp/stock/detail/" + "1301"
+            # URLを設定print(settlement_quarter)
+            url = "https://trade.line-sec.co.jp/stock/detail/" + stock_code_str
 
             # ドライバの設定（geckodriver は /usr/local/bin/に配置している）
             driver = webdriver.Firefox()
             driver.get(url)
             time.sleep(1)
 
-            # もっとみるボタンの存在確認
-            settlement_button = driver.find_elements(By.XPATH, "//article/div/div/button")
-            print(settlement_button)
             # もっとみるボタンが存在する場合、ボタンをクリックする
+            settlement_button = driver.find_elements(By.XPATH, "//article/div/div/button")
             if not len(settlement_button) == 0:
                 for button_to_click in settlement_button:
                     # クリックしたいボタンまで画面をスクロール
@@ -176,39 +172,35 @@ def get_settlement_ymd(securities_code_list):
                     time.sleep(1)
 
             # 決算予想のリンクリスト
-            kessanForecastlinkList = driver.find_elements(By.XPATH, "//article/a")
+            kessan_forecast_link_list = driver.find_elements(By.XPATH, "//article/a")
 
-            #決算予想未取得フラグ
-            kessanUnacquiredFlg = True
-            #業績修正予想未取得フラグ
-            gyosekiUnacquiredFlg = True
-
-            for link in kessanForecastlinkList:
+            for link in kessan_forecast_link_list:
                 # 報告の種類名を取得（決算or業績修正）
                 settlement_category = link.find_element(By.CLASS_NAME, "_5wW_ZM").text
+
+                # 決算だがQがない場合の検証のため取得
+                report_name = link.find_element(By.CLASS_NAME, "_5wW_x3").text
+
                 # 決算クオーターを取得（通期or1Qor2Qor3QorNone）
-                print(settlement_category)
-                if not settlement_category == "業績修正":
+                # if not settlement_category == "業績修正":
+                if (settlement_category == "決算") and ("Q" in report_name or "通期" in report_name):
                     settlement_quarter = link.find_element(By.CLASS_NAME, "_5wW_Va").text
-                    print(settlement_quarter)
                 else:
-                    settlement_quarter = None
-                    print(settlement_quarter)
+                    settlement_quarter = ""
+
                 # 決算年度を取得
                 settlement_year = link.find_element(By.CLASS_NAME, "_5wW_Jg").text
+
                 # 決算発表日と時間を取得
                 settlement_published_date_time = link.find_element(By.CLASS_NAME, "_5wW_uB").text
                 time.sleep(1)
 
-                # テスト用printメソッド。完成後削除
-                print(settlement_category)
-                print(settlement_quarter)
-                print(settlement_year)
-                print(settlement_published_date_time)
-
                 # データ整形。決算クオーターが"通期"の場合、"4Q"に置換する。
                 if settlement_quarter == "通期":
-                    settlement_quarter = "4Q"
+                    settlement_quarter = "4"
+
+                # データ整形。クォータに含まれている"Q"を取り除く。
+                settlement_quarter = settlement_quarter.replace("Q", "")
 
                 # データ整形。決算年度のみを切り出す。
                 settlement_year = settlement_year[0:4]
@@ -219,19 +211,40 @@ def get_settlement_ymd(securities_code_list):
 
                 # データ整形。決算公表日に含まれている"/"を取り除く。
                 settlement_published_date = settlement_published_date.replace("/", "")
+
+                # データ整形。決算公表日の末尾に" "が入ってる場合は無視する。
+                if settlement_published_date[-1] == " ":
+                    settlement_published_date = settlement_published_date[:-1]
+
                 # 決算公表日の翌営業日を求めるために、文字列を日付型にする。
                 settlement_published_date_tmp = datetime.datetime.strptime(settlement_published_date, '%Y%m%d')
-                print(settlement_published_date)
-                print(settlement_published_date_tmp)
 
-                settlement_published_time = settlement_published_date_time[11:]
+                # 決算公表日の翌日を求める
+                settlement_published_date_tmp = settlement_published_date_tmp + timedelta(days=1)
+
+                # 土日祝を判定し、翌営業日を取得する
+                while True:
+                    # 祝日の場合
+                    if jpholiday.is_holiday(settlement_published_date_tmp):
+                        settlement_published_date_tmp = settlement_published_date_tmp + timedelta(days=1)
+                        continue
+                    # 土日の場合
+                    elif settlement_published_date_tmp.weekday() >= 5:
+                        settlement_published_date_tmp = settlement_published_date_tmp + timedelta(days=1)
+                        continue
+                    # 平日の場合
+                    else:
+                        settlement_published_next_date = settlement_published_date_tmp
+                        break
+
+                # 翌営業日を文字列型にする
+                settlement_published_next_date = settlement_published_next_date.strftime("%Y%m%d")
 
                 # 決算カテゴリが"決算"かつ決算公表時間が"15:00"の場合、返却用リストにデータを格納する。
                 if (settlement_category == "決算") and (settlement_published_time == "15:00"):
-                    '''
-                    settlement_info_result = [stock_code_str, settlement_year, settlement_quarter,settlement_published_date, ]
+                    settlement_info_result = [stock_code_str, settlement_year, settlement_quarter,
+                                              settlement_published_date, settlement_published_next_date]
                     settlement_info_list.append(settlement_info_result)
-                    '''
                 # 決算カテゴリが"業績修正"かつ決算公表時間が"15:00"の場合、次の要素へ処理を移る。
                 elif (settlement_category == "業績修正") and (settlement_published_time == "15:00"):
                     continue
@@ -239,91 +252,13 @@ def get_settlement_ymd(securities_code_list):
                 elif settlement_published_time is not "15:00":
                     continue
 
-
-            '''
-                if (reportName in kessanNameList and kessanUnacquiredFlg) or (reportName == "業績修正" and gyosekiUnacquiredFlg):
-                    #決算予想のリンクをクリック
-                    link.click()
-                    time.sleep(1)
-
-                    # 決算予想結果
-                    forecastResultPath = driver.find_element(By.CLASS_NAME, "_3rF_Ga")
-                    fororecastResult = forecastResultPath.find_element(By.TAG_NAME,"p").text
-
-                    # 企業名
-                    kigyoNameLink = driver.find_element(By.CLASS_NAME, "_3rF_nN")
-                    kigyoName = kigyoNameLink.find_element(By.TAG_NAME,"h1").text
-
-                    #報告種類が決算
-                    if reportName in kessanNameList:
-                        result = [stockCode,kigyoName,"決算",fororecastResult]
-                        kessanUnacquiredFlg = False
-
-                    #報告種類が業績修正
-                    elif reportName == "業績修正":
-                        result = [stockCode,kigyoName, "業績修正", fororecastResult]
-                        gyosekiUnacquiredFlg = False
-
-                    # 返却用のリストに結果を格納
-                    settlement_info_list.append(result)
-
-                    #前のページに戻る
-                    driver.back()
-                    time.sleep((1))
-            
-            #ブラウザを閉じる
+            # ブラウザを閉じる
             driver.close()
-            '''
+
         except Exception as e:
             print(e)
 
     return settlement_info_list
-
-    '''
-    # 証券コードリストの要素分、決算日情報の取得処理を繰り返す
-    for stockCode in securities_code_list:
-        print("".join(stockCode))
-        # タプルの要素を文字列に変換する
-        stock_code_str = "".join(stockCode)
-        try:
-            # 検索する
-            soup = BeautifulSoup(requests.get(url + stock_code_str).content, "html.parser")
-            # サーバーに負荷を掛けないように1秒止める
-            time.sleep(1)
-            print(soup)
-            print(url + stock_code_str)
-
-            # class = _5wW_WU が存在する場合、class = _5wW_H1 を抽出する。存在しない場合次の証券コードへスキップ。
-            if check_class is not None:
-                settlement_info = soup.findAll(True, class_ = "_5wW_H1")
-
-                #class = _5wW_H1 の数だけ情報抽出処理を繰り返す
-                for settlement_info_individual in settlement_info:
-                    # 決算情報カテゴリの取得（決算または業績修正）
-                    settlement_category_check = settlement_info_individual.find(True, class_ = "_5wW_ZM _5wW_pE")
-
-                    # 決算発表時間を取得
-                    settlement_published_date_time = settlement_info_individual.find(True, class_="_5wW_Jg")
-                    settlement_published_time = settlement_published_date_time[11:]
-
-                    # 決算情報カテゴリが業績修正の場合、次の要素へスキップ。
-                    if settlement_category_check is not None:
-
-
-                        # 決算Qを取得（1Q,2Q,3Q,通期）
-                        settlement_quarter = settlement_info_individual.find(True, class_ = "_5wW_Va")
-                        # 決算カテゴリが通期の場合、文字列"4Q"に置換
-                        if settlement_quarter == "通期":
-                            settlement_quarter.replace("4Q")
-                        # 決算年度を取得
-                        settlement_date = settlement_info_individual.find(True, class_ = "_5wW_Jg")
-                        settlement_date_edit = settlement_date[0:9]
-                        # 決算発表日付を取得
-                        settlement_published_date = settlement_info_individual.find(True, class_ = "_5wW_Jg")
-        
-        except Exception as e:
-            print(e)
-'''
 
 ##########################
 # 以下の関数は参考。後ほど削除
