@@ -143,9 +143,9 @@ def create_growth_comparizon_scatter_plot(previous_growth_rate_list,growth_rate_
     plt.scatter(x_list,y_list,s=5,c="b",marker="D",alpha=0.5)
     plt.show()
 
-# LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算情報を取得（20220605 maeda）要修正。mainメソッドは関数を呼び出すだけ。
+# LINE証券の企業情報詳細ページにアクセスし、過去１年間の決算発表日情報を取得。
 def get_settlement_ymd(securities_code_list):
-    # 決算日情報（証券コード、年度、クォータ、決算公表日、決算公表日の翌営業日）を保持する配列
+    # 決算日情報（証券コード、年度、クォータ、決算発表日、決算発表日の翌営業日）を保持する配列
     settlement_info_list = []
 
     for stockCode in securities_code_list:
@@ -154,7 +154,7 @@ def get_settlement_ymd(securities_code_list):
         stock_code_str = "".join(stockCode)
 
         try:
-            # URLを設定print(settlement_quarter)
+            # URLを設定
             url = "https://trade.line-sec.co.jp/stock/detail/" + stock_code_str
 
             # ドライバの設定（geckodriver は /usr/local/bin/に配置している）
@@ -182,7 +182,6 @@ def get_settlement_ymd(securities_code_list):
                 report_name = link.find_element(By.CLASS_NAME, "_5wW_x3").text
 
                 # 決算クオーターを取得（通期or1Qor2Qor3QorNone）
-                # if not settlement_category == "業績修正":
                 if (settlement_category == "決算") and ("Q" in report_name or "通期" in report_name):
                     settlement_quarter = link.find_element(By.CLASS_NAME, "_5wW_Va").text
                 else:
@@ -205,24 +204,24 @@ def get_settlement_ymd(securities_code_list):
                 # データ整形。決算年度のみを切り出す。
                 settlement_year = settlement_year[0:4]
 
-                # データ整形。決算公表日と決算公表時間を分割する。
+                # データ整形。決算発表日と決算発表時間を分割する。
                 settlement_published_date = settlement_published_date_time[0:11]
                 settlement_published_time = settlement_published_date_time[11:]
 
-                # データ整形。決算公表日に含まれている"/"を取り除く。
+                # データ整形。決算発表日に含まれている"/"を取り除く。
                 settlement_published_date = settlement_published_date.replace("/", "")
 
-                # データ整形。決算公表日の末尾に" "が入ってる場合は無視する。
+                # データ整形。決算発表日の末尾に" "が入ってる場合は無視する。
                 if settlement_published_date[-1] == " ":
                     settlement_published_date = settlement_published_date[:-1]
 
-                # 決算公表日の翌営業日を求めるために、文字列を日付型にする。
+                # 決算発表日の翌営業日を求めるために、文字列を日付型にする。
                 settlement_published_date_tmp = datetime.datetime.strptime(settlement_published_date, '%Y%m%d')
 
-                # 決算公表日の翌日を求める
+                # 決算発表日の翌日を求める
                 settlement_published_date_tmp = settlement_published_date_tmp + timedelta(days=1)
 
-                # 土日祝を判定し、翌営業日を取得する
+                # 土日祝を判定し、決算発表日の翌営業日を取得する
                 while True:
                     # 祝日の場合
                     if jpholiday.is_holiday(settlement_published_date_tmp):
@@ -237,18 +236,18 @@ def get_settlement_ymd(securities_code_list):
                         settlement_published_next_date = settlement_published_date_tmp
                         break
 
-                # 翌営業日を文字列型にする
+                # 決算発表日の翌営業日を文字列型にする
                 settlement_published_next_date = settlement_published_next_date.strftime("%Y%m%d")
 
-                # 決算カテゴリが"決算"かつ決算公表時間が"15:00"の場合、返却用リストにデータを格納する。
+                # 決算カテゴリが"決算"かつ決算発表時間が"15:00"の場合、返却用リストにデータを格納する。
                 if (settlement_category == "決算") and (settlement_published_time == "15:00"):
                     settlement_info_result = [stock_code_str, settlement_year, settlement_quarter,
                                               settlement_published_date, settlement_published_next_date]
                     settlement_info_list.append(settlement_info_result)
-                # 決算カテゴリが"業績修正"かつ決算公表時間が"15:00"の場合、次の要素へ処理を移る。
+                # 決算カテゴリが"業績修正"かつ決算発表時間が"15:00"の場合、次の要素へ処理を移る。
                 elif (settlement_category == "業績修正") and (settlement_published_time == "15:00"):
                     continue
-                # 決算公表時間が15:00でない場合、次の要素へ処理を移る。
+                # 決算発表時間が15:00でない場合、次の要素へ処理を移る。
                 elif settlement_published_time is not "15:00":
                     continue
 
