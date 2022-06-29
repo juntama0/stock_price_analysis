@@ -36,7 +36,7 @@ def select_sql_announcement_ymd(cursor):
 # 株価情報をINSERT
 def insert_stock_price(connection,cursor,stock_price_list):
     # 株価データ挿入SQL
-    INSERT_SQL_STOCK_PRICE = "INSERT INTO t_announcement_of_financial_statements_stock_price (pk_securities_code, pk_year, pk_quarterly_settlement, stock_price, next_day_stock_price, growth_rate, deviation_rate_average_stock_price_25) VALUES ({pk_securities_code}, {pk_year}, {pk_quarterly_settlement}, {stock_price}, {next_day_stock_price}, {growth_rate}, {deviation_rate_average_stock_price_25});"
+    INSERT_SQL_STOCK_PRICE = "INSERT INTO t_announcement_of_financial_statements_stock_price (pk_securities_code, pk_year, pk_quarterly_settlement, stock_price, next_day_stock_price, growth_rate, deviation_rate_average_stock_price_25) VALUES ('{pk_securities_code}', '{pk_year}', '{pk_quarterly_settlement}', {stock_price}, {next_day_stock_price}, {growth_rate}, {deviation_rate_average_stock_price_25});"
 
     for stock_price_set in stock_price_list:
         # INSERTのVALUESをセットする
@@ -49,6 +49,28 @@ def insert_stock_price(connection,cursor,stock_price_list):
             , "growth_rate" : stock_price_set[5]\
             , "deviation_rate_average_stock_price_25" : stock_price_set[6]\
             })
+        # SQL実行
+        cursor.execute(complete_insert_sql_stock_price)
+
+    # コミット
+    connection.commit()
+
+# 決算日情報をINSERT
+def insert_announcement_ymd(connection,cursor,announcement_ymd_list):
+    # 株価データ挿入SQL
+    INSERT_SQL_ANNOUNCEMENT_YMD = "INSERT INTO t_announcement_of_financial_statements (pk_securities_code, pk_year, pk_quarterly_settlement, announcement_of_financial_statements_ymd, next_day_announcement_of_financial_statements_ymd) VALUES ('{pk_securities_code}', '{pk_year}', '{pk_quarterly_settlement}',  '{announcement_of_financial_statements_ymd}', '{next_day_announcement_of_financial_statements_ymd}');"
+    print(announcement_ymd_list)
+    for announcement_ymd_information in announcement_ymd_list:
+        # INSERTのVALUESをセットする
+        complete_insert_sql_stock_price = INSERT_SQL_ANNOUNCEMENT_YMD.format(**{ \
+            "pk_securities_code" : announcement_ymd_information[0] \
+            , "pk_year" : announcement_ymd_information[1]\
+            , "pk_quarterly_settlement" : announcement_ymd_information[2]\
+            , "announcement_of_financial_statements_ymd" : announcement_ymd_information[3]\
+            , "next_day_announcement_of_financial_statements_ymd" : announcement_ymd_information[4]\
+            })
+        print(INSERT_SQL_ANNOUNCEMENT_YMD)
+
         # SQL実行
         cursor.execute(complete_insert_sql_stock_price)
 
@@ -74,7 +96,7 @@ def select_sql_growth_rate(cursor,year,quarterly_settlement):
 # 証券コードを取得
 def select_sql_stock_code_all(cursor):
     # 証券コード取得SQL
-    SELECT_SQL_STOCK_CODE = "SELECT stock_code FROM t_announcement_of_financial_statements_stock_price;"
+    SELECT_SQL_STOCK_CODE = "SELECT stock_code FROM t_stock_code;"
     cursor.execute(SELECT_SQL_STOCK_CODE)
     stockCodeList = cursor.fetchall()
 
